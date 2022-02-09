@@ -24,14 +24,16 @@ public class CalcBrain implements CalcRPNOperations {
         operand = op;
         Float a; 
         Float b;
+        Stack<Float> storage = new Stack<>();
         Float c = new Float(0);
         
         if (operand != ""){
             if (results.size() < 2){
                 return "";
             } else {
-                a = results.pop();
-                b = results.pop();   
+                if (results.peek() != "+" || results.peek() != "-" || results.peek() != "*" || results.peek() != "/" || results.peek() != "^"){
+                    storage.push(Float.parseFloat(results.pop()));
+                }
             }
             
             switch (operand){
