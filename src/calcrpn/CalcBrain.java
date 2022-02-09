@@ -21,8 +21,43 @@ public class CalcBrain implements CalcRPNOperations {
 
     @Override
     public String operator(String op) {
+        operand = op;
+        Float a; 
+        Float b;
+        Float c = new Float(0);
         
-        return null;
+        if (operand != ""){
+            if (results.size() < 2){
+                return "";
+            } else {
+                a = results.pop();
+                b = results.pop();   
+            }
+            
+            switch (operand){
+                case "+":
+                    c = a + b;
+                    break;
+                case "-":
+                    c = b - a;
+                    break;
+                case "*":
+                    c = a * b;
+                    break;
+                case "/":
+                    c = b / a;
+                    break;
+                case "^":
+                    c = (float)(Math.pow(b, a));
+                    break;
+            }
+            
+            results.push(c);
+            operand = "";
+        }
+        
+        
+        return "\n" + c.toString() + "\n";
     }
 
     @Override
