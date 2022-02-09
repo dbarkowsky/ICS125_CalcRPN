@@ -15,38 +15,45 @@ public class CalcBrain implements CalcRPNOperations {
     
     @Override
     public String digit(String digit) {
-
-        return null;
+        operand += digit;
+        return digit;
     }
 
     @Override
     public String operator(String op) {
-
+        
         return null;
     }
 
     @Override
     public String clearEntry() {
-
-        return null;
+        operand = "";
+        return "\nCleared Digits\n";
     }
 
     @Override
     public String clear() {
-
-        return null;
+        operand = "";
+        results = new Stack<>();
+        return "\nClear All\n";
     }
 
     @Override
     public String enterPressed() {
-
-        return null;
+        if (operand != "") {
+            results.push(Float.parseFloat(operand));
+            operand = "";
+        }
+        return " ";
     }
 
     @Override
     public String addDecimal() {
-
-        return null;
+        if (!operand.contains(".")){
+            operand += ".";
+            return ".";
+        }
+        return "";
     }
     
 }
