@@ -6,6 +6,7 @@ public class CalcBrain implements CalcRPNOperations {
 
     Stack<Float> results;
     String operand;
+    Stack<Float> storage;
     
     
     public CalcBrain() {
@@ -13,53 +14,59 @@ public class CalcBrain implements CalcRPNOperations {
         operand = "";
     }
     
+    /* 
+        Adds digit to operand string. Returns digit for printing.
+    */
     @Override
     public String digit(String digit) {
         operand += digit;
         return digit;
     }
 
+    /*
+        Receives operator and performs calculations. Returns string for printing.
+    */
     @Override
     public String operator(String op) {
         operand = op;
-        Float a; 
-        Float b;
-        Stack<Float> storage = new Stack<>();
+        storage = new Stack<>();
         Float c = new Float(0);
         
-        if (operand != ""){
-            if (results.size() < 2){
+        if (isOperand(operand)){
+            if (results.size() < 2)
                 return "";
-            } else {
-                if (results.peek() != "+" || results.peek() != "-" || results.peek() != "*" || results.peek() != "/" || results.peek() != "^"){
-                    storage.push(Float.parseFloat(results.pop()));
+            
+            while(results.size() > 0 && !isOperand(results.peek().toString())){
+                storage.push(results.pop());
+            }
+                
+            c = storage.pop();
+            while(storage.size() > 0){
+                switch (operand){
+                    case "+":
+                        c += storage.pop();
+                        break;
+                    case "-":
+                        c -= storage.pop();
+                        break;
+                    case "*":
+                        c *= storage.pop();
+                        break;
+                    case "/":
+                        c /= storage.pop();
+                        break;
+                    case "^":
+                        c = (float)(Math.pow(c, storage.pop()));
+                        break;
                 }
             }
-            
-            switch (operand){
-                case "+":
-                    c = a + b;
-                    break;
-                case "-":
-                    c = b - a;
-                    break;
-                case "*":
-                    c = a * b;
-                    break;
-                case "/":
-                    c = b / a;
-                    break;
-                case "^":
-                    c = (float)(Math.pow(b, a));
-                    break;
-            }
-            
             results.push(c);
             operand = "";
+            storage.clear();
         }
         
         
-        return "\n" + c.toString() + "\n";
+        return " " + op + "\n" + c.toString() + "\n";
     }
 
     @Override
@@ -71,16 +78,20 @@ public class CalcBrain implements CalcRPNOperations {
     @Override
     public String clear() {
         operand = "";
-        results = new Stack<>();
+        results.clear();
+        storage.clear();
         return "\nClear All\n";
     }
 
     @Override
     public String enterPressed() {
-        if (operand != "") {
+        if (operand != "" && !isOperand(operand)) {
             results.push(Float.parseFloat(operand));
             operand = "";
         }
+        
+//        if (operand == "")
+//            return results.peek().toString();
         return " ";
     }
 
@@ -91,6 +102,23 @@ public class CalcBrain implements CalcRPNOperations {
             return ".";
         }
         return "";
+    }
+    
+    private boolean isOperand(String operand){
+        switch (operand){
+            case "+":
+                return true;
+            case "-":
+                return true;
+            case "^":
+                return true;
+            case "*":
+                return true;
+            case "/":
+                return true;
+            default:
+                return false;
+        }
     }
     
 }
