@@ -345,6 +345,60 @@ public class CalcBrainTest {
         assertEquals(Float.parseFloat(expectedResult.replaceAll("^[^\\n]*\\n",""))
                    , Float.parseFloat(result.replaceAll("^[^\\n]*\\n",""))
                     ,delta);        
-    }            
+    }        
+
+    @Test
+    public void testJunit() {
+        System.out.println("Testing expression 1 2 + 3 * 4 -"); 
+
+        CalcBrain instance = new CalcBrain();
+        instance.digit("1");
+        instance.enterPressed();
+        instance.digit("2");
+        instance.operator("+");
+        instance.digit("3");
+        instance.operator("*");
+        instance.digit("4");
+
+        
+        String result = instance.operator("-");
+                
+        String expectedResult = " +\n5.0 ";
+        
+        float delta = 0.0001f;
+        
+        // Strip out the prefix " -\n" text part of the strings.
+        
+        assertEquals(Float.parseFloat(expectedResult.replaceAll("^[^\\n]*\\n",""))
+                   , Float.parseFloat(result.replaceAll("^[^\\n]*\\n",""))
+                    ,delta);        
+    }
+    
+    @Test
+    public void testExceptionalScenario() {
+        System.out.println("Testing expression 1 - 2 + + 4"); 
+
+        CalcBrain instance = new CalcBrain();
+        instance.digit("1");
+        instance.operator("-");
+        instance.digit("2");
+        instance.operator("+");
+        instance.operator("+");
+
+
+
+        
+        String result = instance.digit("4");
+                
+        String expectedResult = "4";
+        
+        float delta = 0.0001f;
+        
+        // Strip out the prefix " -\n" text part of the strings.
+        
+        assertEquals(Float.parseFloat(expectedResult.replaceAll("^[^\\n]*\\n",""))
+                   , Float.parseFloat(result.replaceAll("^[^\\n]*\\n",""))
+                    ,delta);        
+    }
     
 }
