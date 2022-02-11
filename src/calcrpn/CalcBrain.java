@@ -6,7 +6,6 @@ public class CalcBrain implements CalcRPNOperations {
 
     Stack<Float> results;
     String operand;
-    Stack<Float> storage;
     
     
     public CalcBrain() {
@@ -29,91 +28,62 @@ public class CalcBrain implements CalcRPNOperations {
     @Override
     public String operator(String op) {
         
-        storage = new Stack<>();
-        Float c = new Float(0);
+        Float result = new Float(0);
         
-        if (op != ""){
-            if (results.size() < 2){
-                switch (op){
-                    case "+":
-                        c = Float.parseFloat(operand) + results.pop();
-                        break;
-                    case "-":
-                        c =  results.pop() - Float.parseFloat(operand);
-                        break;
-                    case "*":
-                        c = Float.parseFloat(operand) * results.pop();
-                        break;
-                    case "/":
-                        c =  results.pop() / Float.parseFloat(operand);
-                        break;
-                    case "^":
-                        c = (float)(Math.pow(results.pop(), Float.parseFloat(operand)));
-                        break;
-                }
-                return " " + op + "\n" + c.toString() + "\n";
-            } else {
-                while(results.size() > 0 && !isOperand(results.peek().toString())
-                    ){
-                    storage.push(results.pop());
-                }
-
-                c = storage.pop();
-                while(storage.size() > 0){
-                    switch (op){
-                        case "+":
-                            c += storage.pop();
-                            break;
-                        case "-":
-                            c -= storage.pop();
-                            break;
-                        case "*":
-                            c *= storage.pop();
-                            break;
-                        case "/":
-                            c /= storage.pop();
-                            break;
-                        case "^":
-                            c = (float)(Math.pow(c, storage.pop()));
-                            break;
-                    }
-                }
-            }
-            results.push(c);
-            operand = "";
-//            storage.clear();
+        //three possible scenarios...
+        if (results.isEmpty() || (results.size() < 2 && operand == "")){
+            //do nothing
+            return "";
+        } else if (results.size() >= 2 && operand == ""){
+            //pop 2 and calculate
+            result = calculate(op, results.pop(), results.pop());
+        } else { // if operand is occupied and results are > 0
+            //pop 1 and calculate
+            result = calculate(op, Float.parseFloat(operand), results.pop());
         }
-        
-        
-        return " " + op + "\n" + c.toString() + "\n";
+                      
+        results.push(result);
+        operand = "";
+        return " " + op + "\n" + results.peek().toString() + " ";
     }
 
+    /*
+        Clears out the operand, and if the operand is already empty, removed an element from the stack
+    */
     @Override
     public String clearEntry() {
+        if (results.size() > 0 && operand == ""){
+            results.pop();
+        }
         operand = "";
         return "\nCleared Digits\n";
     }
 
+    /*
+        Clears out the operand and the entire results stack
+    */
     @Override
     public String clear() {
         operand = "";
         results.clear();
-        storage.clear();
         return "\nClear All\n";
     }
 
+    /*
+        Assuming operand is valid, pushes it to the stack and resets operand
+    */
     @Override
     public String enterPressed() {
-        if (operand != "" && !isOperand(operand)) {
+        if (operand != "" && !isOperator(operand)) {
             results.push(Float.parseFloat(operand));
             operand = "";
         }
-        
-//        if (operand == "")
-//            return results.peek().toString();
         return " ";
     }
 
+    /*
+        Inserts decimal into operand if it's not already present.
+    */
     @Override
     public String addDecimal() {
         if (!operand.contains(".")){
@@ -123,30 +93,36 @@ public class CalcBrain implements CalcRPNOperations {
         return "";
     }
     
-    private Float calculate(String operand){
-        Float c = new Float(0);
-        switch (operand){
+    /*
+        Calculation formula; Returns float; Takes operator, right part of calulation, left part of calculation
+    */
+    private Float calculate(String op, Float right, Float left){
+        Float result = new Float(0);
+        switch (op){
             case "+":
-                c += storage.pop();
+                result = left + right;
                 break;
             case "-":
-                c -= storage.pop();
+                result = left - right;
                 break;
             case "*":
-                c *= storage.pop();
+                result = left * right;
                 break;
             case "/":
-                c /= storage.pop();
+                result = left / right;
                 break;
             case "^":
-                c = (float)(Math.pow(c, storage.pop()));
+                result = (float)(Math.pow(left, right));
                 break;
         }
-        return c;
+        return result;
     }
     
-    private boolean isOperand(String operand){
-        switch (operand){
+    /*
+        Checks to see if string is valid operator
+    */
+    private boolean isOperator(String operator){
+        switch (operator){
             case "+":
                 return true;
             case "-":
