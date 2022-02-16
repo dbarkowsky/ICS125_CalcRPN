@@ -74,11 +74,13 @@ public class CalcBrain implements CalcRPNOperations {
     */
     @Override
     public String enterPressed() {
-        if (operand != "" && !isOperator(operand)) {
+        if (operand != "" && !isOperator(operand) && !operand.equals(".")) {
             results.push(Float.parseFloat(operand));
             operand = "";
+            return " ";
+        } else {
+           return ""; 
         }
-        return " ";
     }
 
     /*
